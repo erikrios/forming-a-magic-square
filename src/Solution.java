@@ -1,68 +1,56 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Solution {
 
     // Complete the formingMagicSquare function below.
     static int formingMagicSquare(int[][] s) {
-        int[][] newForms = new int[3][3];
 
-        for (int i = 0; i < s.length; i++) {
-            newForms[i] = Arrays.copyOf(s[i], s[i].length);
-        }
+        int[][][] magicSquares = {
+                {{8, 1, 6}, {3, 5, 7}, {4, 9, 2}},
+                {{6, 1, 8}, {7, 5, 3}, {2, 9, 4}},
+                {{4, 9, 2}, {3, 5, 7}, {8, 1, 6}},
+                {{2, 9, 4}, {7, 5, 3}, {6, 1, 8}},
+                {{8, 3, 4}, {1, 5, 9}, {6, 7, 2}},
+                {{4, 3, 8}, {9, 5, 1}, {2, 7, 6}},
+                {{6, 7, 2}, {1, 5, 9}, {8, 3, 4}},
+                {{2, 7, 6}, {9, 5, 1}, {4, 3, 8}}
+        };
 
-        int maxValue = newForms[1][1] * 3;
+        List<Integer> totals = new ArrayList<>();
 
-        int crossOneTotal = newForms[0][0] + newForms[1][1] + newForms[2][2];
-        int crossTwoTotal = newForms[0][2] + newForms[1][1] + newForms[2][0];
-        int verticalTotal = newForms[0][1] + newForms[1][1] + newForms[2][1];
-        int horizontalTotal = newForms[1][0] + newForms[1][1] + newForms[1][2];
+        for (int[][] magicSquare : magicSquares) {
+            int total = 0;
 
-        // Cross One
-        int crossOneLeftover = maxValue - crossOneTotal;
-        if ((newForms[0][0] + crossOneLeftover) + newForms[0][1] + newForms[0][2] == maxValue && (newForms[0][0] + crossOneLeftover) + newForms[1][0] + newForms[2][0] == maxValue) {
-            newForms[0][0] += crossOneLeftover;
-        } else {
-            newForms[2][2] += crossOneLeftover;
-        }
+            for (int i = 0; i < magicSquare.length; i++) {
+                int[] magicSquareRow = magicSquare[i];
+                int[] sRow = s[i];
 
-        // Cross Two
-        int crossTwoLeftover = maxValue - crossTwoTotal;
-        if (newForms[0][0] + newForms[0][1] + (newForms[0][2] + crossTwoLeftover) == maxValue && (newForms[0][2] + crossOneLeftover) + newForms[1][2] + newForms[2][2] == maxValue) {
-            newForms[0][2] += crossTwoLeftover;
-        } else {
-            newForms[2][0] += crossTwoLeftover;
-        }
-
-        // Vertical
-        int verticalLeftOver = maxValue - verticalTotal;
-        if (newForms[0][0] + (newForms[0][1] + verticalLeftOver) + newForms[0][2] == maxValue) {
-            newForms[0][1] += verticalLeftOver;
-        } else {
-            newForms[2][1] += verticalLeftOver;
-        }
-
-        // Horizontal
-        int horizontalLeftOver = maxValue - horizontalTotal;
-        if (newForms[0][0] + (newForms[1][0] + horizontalLeftOver) + newForms[2][0] == maxValue) {
-            newForms[1][0] += horizontalLeftOver;
-        } else {
-            newForms[1][2] += horizontalLeftOver;
-        }
-
-        int minimumCost = 0;
-        for (int i = 0; i < s.length; i++) {
-            for (int j = 0; j < s.length; j++) {
-                if (s[i][j] != newForms[i][j]) {
-                    minimumCost += Math.abs(s[i][j] - newForms[i][j]);
+                for (int j = 0; j < magicSquareRow.length; j++) {
+                    int magicSquareRowItem = magicSquareRow[j];
+                    int sRowItem = sRow[j];
+                    if (magicSquareRowItem != sRowItem) {
+                        total += Math.abs(sRowItem - magicSquareRowItem);
+                    }
                 }
+            }
+
+            totals.add(total);
+        }
+
+        int minimumValue = Integer.MAX_VALUE;
+
+        for (int total : totals) {
+            if (total < minimumValue) {
+                minimumValue = total;
             }
         }
 
-        return minimumCost;
+        return minimumValue;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
